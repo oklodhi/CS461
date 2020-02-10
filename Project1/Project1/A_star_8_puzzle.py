@@ -64,28 +64,32 @@ class Puzzle:
             return False
         return True
 
-    def solvePath(self, end):
-    # saves the path from puzzle start state to goal state, if puzzle is solvable
+    def solvePath(self, grid, n):
+    # saves the path from puzzle start state to goal state, if puzzle is solvable, and print solution to a file
+        file = open("puzzle_%d_solution.txt" % n, "w")
+        
         path = []
-        temp = end
+        temp = grid
         while(temp !=0):
             path.insert(0,temp)
             temp = temp.parent
         for state in path:
             for x in state.data:
                 for y in x:
-                    print(y,' ',end = '')
-                print()
-            print()
+                    file.write('%s' % y)
+                    file.write(' ')
+                file.write("\n")
+            file.write("\n")
     
     def process(self, Puzzles):
     # main process of the program
     # inputs the puzzles, and checks if each puzzle is solvable or not
+        goal = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '0']]
+        num = 1
         for i in range (0,len(Puzzles)):
             self.open = []
             self.closed = []
-            print("Press Enter to do Puzzle",i+1)
-            input()
+            print("Solving puzzle",i+1, "...")
             start = Puzzles[i]
             for x in start:
                 for y in x:
@@ -93,7 +97,6 @@ class Puzzle:
                 print()
             print()
             if self.checkSolvable(Puzzles[i]):
-                goal = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '0']]
                 start = States(start,0,0,0,0)
                 start.huer = self.h(start.data,goal)
                 start.fvalue = start.huer + start.level
@@ -119,14 +122,15 @@ class Puzzle:
                     if(len(self.open) == 0):
                         print('NO SOLUTIONS')
                         break
-                print('\nTotal states visited: ', len(self.closed))
-                print('Solution at depth:',current.level)
-                key = input('Press Y/N for solution: ')
-                if key == 'Y':
-                    self.solvePath(current)
+                print('Solution found!')
+                print('Total states visited: ', len(self.closed))
+                print('Solution at tree depth:',current.level)
+                print('Solution printed to: puzzle_%d_solution.txt' % num)
+                self.solvePath(current, num)
                 print("\n--------------------------")
             else:
                 print("Not Solvable\n--------------------------")
+            num+=1
 
 # class states that handle manpulation of the different states of a given puzzle
 class States:
