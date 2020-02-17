@@ -1,20 +1,102 @@
+# Omer Khan
+# Project 2
+# CS 461 - Brian Hare
+
 import random, copy
 from Classes import *
 from math import ceil, log2
 import math
-Group.groups = [Group("a", 10), Group("b", 20), Group("c", 30), Group("d", 10), Group("e", 40)]
 
-Professor.professors = [Professor("mutaqi"), Professor("khalid"), Professor("zafar"),
-                        Professor("basit"), Professor("khalid_zaheer")]
+# initialize a list of courses with name and size
+Course.courses = [Course("CS101A", 40),
+                  Course("CS101B", 25),
+                  Course("CS201A", 30),
+                  Course("CS201B", 30),
+                  Course("CS191A", 60),
+                  Course("CS191B", 20),
+                  Course("CS291A", 20),
+                  Course("CS291B", 40)
+                  Course("CS303", 50),
+                  Course("CS341", 40),
+                  Course("CS449", 55),
+                  Course("CS461", 40)]
 
-CourseClass.classes = [CourseClass("hu100a"), CourseClass("hu100b"), CourseClass("mt111"),
-                       CourseClass("hu160"), CourseClass("cs101 lab", is_lab=True),
-                       CourseClass("ch110"), CourseClass("cs101"), CourseClass("cs152")]
+# initialize a list of professors and the course they teach
+Professor.professors = [Professor("Hare", "CS101A"),
+                        Professor("Hare", "CS101B"),
+                        Professor("Hare", "CS201A"),
+                        Professor("Hare", "CS201B"),
+                        Professor("Hare", "CS291A"),
+                        Professor("Hare", "CS291B"),
+                        Professor("Hare", "CS303"),
+                        Professor("Hare", "CS449"),
+                        Professor("Hare", "CS461"),
+                        Professor("Bingham", "CS101A"),
+                        Professor("Bingham", "CS101B"),
+                        Professor("Bingham", "CS201A"),
+                        Professor("Bingham", "CS201B"),
+                        Professor("Bingham", "CS191A"),
+                        Professor("Bingham", "CS191B"),
+                        Professor("Bingham", "CS291A"),
+                        Professor("Bingham", "CS291B"),
+                        Professor("Bingham", "CS449"),
+                        Professor("Kuhail", "CS303"),
+                        Professor("Kuhail", "CS341"),
+                        Professor("Mitchell", "CS191A"),
+                        Professor("Mitchell", "CS191B"),
+                        Professor("Mitchell", "CS291A"),
+                        Professor("Mitchell", "CS291B"),
+                        Professor("Mitchell", "CS303"),
+                        Professor("Mitchell", "CS341"),
+                        Professor("Rao", "CS291A"),
+                        Professor("Rao", "CS291B"),
+                        Professor("Rao", "CS303"),
+                        Professor("Rao", "CS341"),
+                        Professor("Rao", "CS461"),
+                        Professor("Staff", "CS101A"),
+                        Professor("Staff", "CS101B"),
+                        Professor("Staff", "CS201A"),
+                        Professor("Staff", "CS201B"),
+                        Professor("Staff", "CS191A"),
+                        Professor("Staff", "CS191B"),
+                        Professor("Staff", "CS291A"),
+                        Professor("Staff", "CS291B"),
+                        Professor("Staff", "CS303"),
+                        Professor("Staff", "CS341"),
+                        Professor("Staff", "CS449"),
+                        Professor("Staff", "CS461")]
 
-Room.rooms = [Room("lt1", 20), Room("lt2", 40), Room("lt3", 60), Room("lab", 100, is_lab=True)]
+# initialize a list of locations and seats available for that classroom
+Location.locations = [Location("Haag 301", 70),
+                      Location("Haag 206", 30),
+                      Location("Royall 204", 70),
+                      Location("Katz 209", 50),
+                      Location("Flarsheim 310", 80),
+                      Location("Flarsheim 260", 25),
+                      Location("Bloch 0009", 30)]
 
-Slot.slots = [Slot("08:30", "10:00", "Mon"), Slot("10:15", "11:45", "Mon"),
-              Slot("12:00", "13:30", "Mon"), Slot("08:30", "10:00", "Tue"), Slot("08:30", "11:30", "Mon", True)]
+# initialize a list of available class timings (in military time)
+Time.timing = [Time("10:00", "10:50", "Mon"),
+               Time("11:00", "11:50", "Mon"),
+               Time("12:00", "12:50", "Mon"),
+               Time("13:00", "13:50", "Mon"),
+               Time("14:00", "14:50", "Mon"),
+               Time("15:00", "15:50", "Mon"),
+               Time("16:00", "16:50", "Mon"),
+               Time("10:00", "10:50", "Wed"),
+               Time("11:00", "11:50", "Wed"),
+               Time("12:00", "12:50", "Wed"),
+               Time("13:00", "13:50", "Wed"),
+               Time("14:00", "14:50", "Wed"),
+               Time("15:00", "15:50", "Wed"),
+               Time("16:00", "16:50", "Wed"),
+               Time("10:00", "10:50", "Fri"),
+               Time("11:00", "11:50", "Fri"),
+               Time("12:00", "12:50", "Fri"),
+               Time("13:00", "13:50", "Fri"),
+               Time("14:00", "14:50", "Fri"),
+               Time("15:00", "15:50", "Fri"),
+               Time("16:00", "16:50", "Fri")]
 
 # TODO
 # 0.  Running Simplified Class Scheduling - Done
@@ -26,16 +108,9 @@ Slot.slots = [Slot("08:30", "10:00", "Mon"), Slot("10:15", "11:45", "Mon"),
 # 3.  Multiple classes - Done
 # 4.  Lab - Done
 
-# Below chromosome parts are just to teach basic
-
 # cpg = ["000000", "010001", "100100", "111010"] # course, professor, student group pair
 # lts = ["00", "01"] # lecture theatres
 # slots = ["00", "01"] # time slots
-
-# ######### Chromosome ##############
-# <CourseClass, Prof, Group, Slot, LT>   #
-# ###################################
-
 
 max_score = None
 
@@ -286,9 +361,9 @@ def acceptance_probability(old_cost, new_cost, temperature):
         return math.exp((old_cost - new_cost) / temperature)
 
 def simulated_annealing():
-    alpha = 0.9
-    T = 1.0
-    T_min = 0.00001
+    alpha = 0.95
+    T = 0.05
+    T_min = 0.05
     
     convert_input_to_bin()
     population = init_population(1) # as simulated annealing is a single-state method
@@ -315,7 +390,10 @@ def simulated_annealing():
 
 
 def main():
+    # initlize pseudo-random number
     random.seed()
+
+    # start simulated annealing and find best schedule
     simulated_annealing()
 
 main()
