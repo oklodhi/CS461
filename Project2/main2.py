@@ -139,14 +139,14 @@ def join_cpg_pair(_cpg):
 def convert_input_to_bin():
     global cpg, lts, slots, max_score
 
-    cpg = [CourseClass.find("hu100a"), Professor.find("mutaqi"), Group.find("a"),
-           CourseClass.find("hu100b"), Professor.find("mutaqi"), Group.find("a"),
-           CourseClass.find("mt111"), Professor.find("khalid"), Group.find("a"),
-           CourseClass.find("cs152"), Professor.find("basit"), Group.find("a"),
-           CourseClass.find("hu160"), Professor.find("mutaqi"), Group.find("b"),
-           CourseClass.find("ch110"), Professor.find("zafar"), Group.find("e"),
-           CourseClass.find("cs101"), Professor.find("basit"), Group.find("e"),
-           CourseClass.find("cs101 lab"), Professor.find("basit"), Group.find("e")
+    cpg = [CourseClass.find("hu100a"), Professor.find("mutaqi"),
+           CourseClass.find("hu100b"), Professor.find("mutaqi"),
+           CourseClass.find("mt111"), Professor.find("khalid"),
+           CourseClass.find("cs152"), Professor.find("basit"),
+           CourseClass.find("hu160"), Professor.find("mutaqi"),
+           CourseClass.find("ch110"), Professor.find("zafar"),
+           CourseClass.find("cs101"), Professor.find("basit"),
+           CourseClass.find("cs101 lab"), Professor.find("basit")
            ]
 
     for _c in range(len(cpg)):
