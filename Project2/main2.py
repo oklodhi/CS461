@@ -380,7 +380,7 @@ def simulated_annealing():
 
     for __n in range(4000):
         new_solution = swn(population[0])
-        new_solution = ssn(population[0])
+        new_solution = ssn(new_solution)
         new_cost = cost(new_solution[0])
         ap = acceptance_probability(old_cost, new_cost, T)
         if ap > random.random():
