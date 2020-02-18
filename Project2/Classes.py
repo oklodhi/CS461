@@ -8,8 +8,8 @@ class Course:
 
     @staticmethod
     def find(name):
-        for i in range(len(Group.groups)):
-            if Group.courses[i].name == name:
+        for i in range(len(Course.courses)):
+            if Course.courses[i].name == name:
                 return i
         return -1
 
@@ -27,7 +27,7 @@ class Professor:
     @staticmethod
     def find(name):
         for i in range(len(Professor.professors)):
-            if Professor.professors[i].name == name && Professor.professors[i].course == course:
+            if Professor.professors[i].name == name and Professor.professors[i].course == course:
                 return i
         return -1
 

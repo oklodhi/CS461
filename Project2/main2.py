@@ -15,7 +15,7 @@ Course.courses = [Course("CS101A", 40),
                   Course("CS191A", 60),
                   Course("CS191B", 20),
                   Course("CS291A", 20),
-                  Course("CS291B", 40)
+                  Course("CS291B", 40),
                   Course("CS303", 50),
                   Course("CS341", 40),
                   Course("CS449", 55),
@@ -105,7 +105,7 @@ Time.timing = [Time("10:00", "10:50", "Mon"),
 # 2.  Class Size - Done
 # 2.25 Check Selection Function - Done
 # 2.5 One group can attend only one class at a time - Done
-# 3.  Multiple classes - Done
+# 3.  Multiple courses - Done
 # 4.  Lab - Done
 
 # cpg = ["000000", "010001", "100100", "111010"] # course, professor, student group pair
@@ -126,6 +126,7 @@ def bits_needed(x):
     if r is None:
         r = int(ceil(log2(len(x))))
         bits_needed_backup_store[id(x)] = r
+    # return max from r or 1 (one)
     return max(r, 1)
 
 
@@ -139,30 +140,35 @@ def join_cpg_pair(_cpg):
 def convert_input_to_bin():
     global cpg, lts, slots, max_score
 
-    cpg = [CourseClass.find("hu100a"), Professor.find("mutaqi"),
-           CourseClass.find("hu100b"), Professor.find("mutaqi"),
-           CourseClass.find("mt111"), Professor.find("khalid"),
-           CourseClass.find("cs152"), Professor.find("basit"),
-           CourseClass.find("hu160"), Professor.find("mutaqi"),
-           CourseClass.find("ch110"), Professor.find("zafar"),
-           CourseClass.find("cs101"), Professor.find("basit"),
-           CourseClass.find("cs101 lab"), Professor.find("basit")
-           ]
+    # cpg list creates a list[] of element index number from the searched courses and professors 
+    cpg = [Course.find("CS101A"), Professor.find("mutaqi"),
+           Course.find("CS101B"), Professor.find("mutaqi"),
+           Course.find("CS201A"), Professor.find("khalid"),
+           Course.find("CS201B"), Professor.find("basit"),
+           Course.find("CS191A"), Professor.find("mutaqi"),
+           Course.find("CS191B"), Professor.find("zafar"),
+           Course.find("CS291A"), Professor.find("basit"),
+           Course.find("CS291B"), Professor.find("basit"),
+           Course.find("CS303"), Professor.find("mutaqi"),
+           Course.find("CS341"), Professor.find("zafar"),
+           Course.find("CS449"), Professor.find("basit"),
+           Course.find("CS461"), Professor.find("basit")]
 
+    # iterate over the entire cpg list[]
     for _c in range(len(cpg)):
-        if _c % 3:  # CourseClass
-            cpg[_c] = (bin(cpg[_c])[2:]).rjust(bits_needed(CourseClass.classes), '0')
+        if _c % 3:  # Course    
+            cpg[_c] = (bin(cpg[_c])[2:]).rjust(bits_needed(Course.courses), '0')
         elif _c % 3 == 1:  # Professor
             cpg[_c] = (bin(cpg[_c])[2:]).rjust(bits_needed(Professor.professors), '0')
         else:  # Group
-            cpg[_c] = (bin(cpg[_c])[2:]).rjust(bits_needed(Group.groups), '0')
+            cpg[_c] = (bin(cpg[_c])[2:]).rjust(bits_needed(Course.courses), '0')
 
     cpg = join_cpg_pair(cpg)
-    for r in range(len(Room.rooms)):
-        lts.append((bin(r)[2:]).rjust(bits_needed(Room.rooms), '0'))
+    for r in range(len(Location.locations)):
+        lts.append((bin(r)[2:]).rjust(bits_needed(Location.locations), '0'))
 
-    for t in range(len(Slot.slots)):
-        slots.append((bin(t)[2:]).rjust(bits_needed(Slot.slots), '0'))
+    for t in range(len(Time.timing)):
+        slots.append((bin(t)[2:]).rjust(bits_needed(Time.timing), '0'))
 
     # print(cpg)
     max_score = (len(cpg) - 1) * 3 + len(cpg) * 3
@@ -171,30 +177,30 @@ def convert_input_to_bin():
 def course_bits(chromosome):
     i = 0
 
-    return chromosome[i:i + bits_needed(CourseClass.classes)]
+    return chromosome[i:i + bits_needed(Course.courses)]
 
 
 def professor_bits(chromosome):
-    i = bits_needed(CourseClass.classes)
+    i = bits_needed(Course.courses)
 
     return chromosome[i: i + bits_needed(Professor.professors)]
 
 
 def group_bits(chromosome):
-    i = bits_needed(CourseClass.classes) + bits_needed(Professor.professors)
+    i = bits_needed(Course.courses) + bits_needed(Professor.professors)
 
     return chromosome[i:i + bits_needed(Group.groups)]
 
 
 def slot_bits(chromosome):
-    i = bits_needed(CourseClass.classes) + bits_needed(Professor.professors) + \
+    i = bits_needed(Course.courses) + bits_needed(Professor.professors) + \
         bits_needed(Group.groups)
 
     return chromosome[i:i + bits_needed(Slot.slots)]
 
 
 def lt_bits(chromosome):
-    i = bits_needed(CourseClass.classes) + bits_needed(Professor.professors) + \
+    i = bits_needed(Course.courses) + bits_needed(Professor.professors) + \
         bits_needed(Group.groups) + bits_needed(Slot.slots)
 
     return chromosome[i: i + bits_needed(Room.rooms)]
@@ -232,14 +238,14 @@ def group_member_one_class(chromosomes):
         for j in range(i + 1, len(chromosomes)):
             if slot_clash(chromosomes[i], chromosomes[j]) and\
                     group_bits(chromosomes[i]) == group_bits(chromosomes[j]):
-                # print("These classes have slot/lts clash")
+                # print("These courses have slot/lts clash")
                 # print_chromosome(chromosomes[i])
                 # print_chromosome(chromosomes[j])
                 # print("____________")
                 clash = True
                 break
         if not clash:
-            # print("These classes have no slot/lts clash")
+            # print("These courses have no slot/lts clash")
             # print_chromosome(chromosomes[i])
             # print_chromosome(chromosomes[j])
             # print("____________")
@@ -254,7 +260,7 @@ def use_spare_classroom(chromosome):
         clash = False
         for j in range(i + 1, len(chromosome)):  # check it with all other cpg pairs
             if slot_clash(chromosome[i], chromosome[j]) and lt_bits(chromosome[i]) == lt_bits(chromosome[j]):
-                # print("These classes have slot/lts clash")
+                # print("These courses have slot/lts clash")
                 # printChromosome(chromosome[i])
                 # printChromosome(chromosome[j])
                 clash = True
@@ -263,7 +269,7 @@ def use_spare_classroom(chromosome):
     return scores
 
 
-# checks that the classroom capacity is large enough for the classes that
+# checks that the classroom capacity is large enough for the courses that
 # are assigned to that classroom.
 def classroom_size(chromosomes):
     scores = 0
@@ -277,7 +283,7 @@ def classroom_size(chromosomes):
 def appropriate_room(chromosomes):
     scores = 0
     for _c in chromosomes:
-        if CourseClass.classes[int(course_bits(_c), 2)].is_lab == Room.rooms[int(lt_bits(_c), 2)].is_lab:
+        if Course.courses[int(course_bits(_c), 2)].is_lab == Room.rooms[int(lt_bits(_c), 2)].is_lab:
             scores = scores + 1
     return scores
 
@@ -286,7 +292,7 @@ def appropriate_room(chromosomes):
 def appropriate_timeslot(chromosomes):
     scores = 0
     for _c in chromosomes:
-        if CourseClass.classes[int(course_bits(_c), 2)].is_lab == Slot.slots[int(slot_bits(_c), 2)].is_lab_slot:
+        if Course.courses[int(course_bits(_c), 2)].is_lab == Slot.slots[int(slot_bits(_c), 2)].is_lab_slot:
             scores = scores + 1
     return scores
 
@@ -319,7 +325,7 @@ def init_population(n):
     return chromosomes
 
 def print_chromosome(chromosome):
-    print(CourseClass.classes[int(course_bits(chromosome), 2)], " | ",
+    print(Course.courses[int(course_bits(chromosome), 2)], " | ",
           Professor.professors[int(professor_bits(chromosome), 2)], " | ",
           Group.groups[int(group_bits(chromosome), 2)], " | ",
           Slot.slots[int(slot_bits(chromosome), 2)], " | ",
@@ -339,7 +345,7 @@ def ssn(solution):
     return [new_solution]
 
 # Swapping Neighborhoods
-# It randomy selects two classes and swap their time slots
+# It randomy selects two courses and swap their time slots
 def swn(solution):
     a = random.randint(0, len(solution) - 1)
     b = random.randint(0, len(solution) - 1)
