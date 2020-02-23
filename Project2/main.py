@@ -40,17 +40,13 @@ courses = [ Course("CS101A", 40),
             Course("CS449", 55),
             Course("CS461", 40)]
 
-schedule1 = Schedule(courses, timings, classrooms, profs)
+# create a list of schedules
+schedule_list = []
+# generate 10 random schedules, append to list, and find each ones fitness scores
+for i in range(0,10):
+    schedule_list.append(Schedule(courses, timings, classrooms, profs))
+    schedule_list[i].generate_schedule()
+    schedule_list[i].calculate_fitness_score()
+    print(i,schedule_list[i].fitness)
 
-schedule1.generate_schedule()
-print('____________')
-s= copy.copy(schedule1.courses)
-schedule1.courses.sort(key=lambda courses: courses.time.start, reverse=False)
-for i in schedule1.courses:
-    print(i.name)
-    print(i.instructor.name)
-    print(i.place.name)
-    print(i.time.start)
-    print()
-print()
 
