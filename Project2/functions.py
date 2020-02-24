@@ -44,6 +44,13 @@ class Schedule:
         self.classrooms = copy.deepcopy(classrooms)
         self.profs = copy.deepcopy(profs)
 
+    def random_schedule(self):
+        for c in range(0,len(self.courses)):
+            self.courses[c].instructor = self.profs[r.randint(0,len(self.profs)-1)]
+            location_num = r.randint(0,len(self.classrooms)-1)
+            self.courses[c].place = self.classrooms[location_num]
+            self.courses[c].time = self.classrooms[location_num].time[r.randint(0,len(self.classrooms[location_num].time)-1)]
+        
     # get a random course from course list
     def get_random_course(self):
         courselist = copy.deepcopy(self.courses)
@@ -161,158 +168,74 @@ class Schedule:
             self.create_single_course(self.courses[i])
         #self.pprint()
 
+    #def update(self):
+        #continue
+
     # calculate fitness score based on the given constraints
     def calculate_fitness_score(self):
+        self.fitness = 0
         for c in self.courses:
-            # taught by instructor or staff
-            if c.instructor.name != "Staff":
-                self.fitness += 3
-            else:
-                self.fitness += 1
             # if room size is twice enrollment
-            if( 2*c.place.size <= c.size):
-                self.fitness += 2
-                
-        # if instructor teaching more than 4 courses
-        for p in self.profs:
-            if len(p.time) > 4:
-                self.fitness -= 5*(len(p.time)-4)
-        # Rao or Mitchell vs Hare or Bingham
-        if (len(self.profs[3].time) > len(self.profs[0].time)) or \
-           (len(self.profs[3].time) > len(self.profs[1].time)) or \
-           (len(self.profs[4].time) > len(self.profs[0].time)) or \
-           (len(self.profs[4].time) > len(self.profs[1].time)):
-            self.fitness -= 10
-        # if corequisite course at same time 201 and 291
-        if (self.courses[2].time.start == self.courses[6].time.start) or \
-           (self.courses[2].time.start == self.courses[7].time.start):
-            self.fitness -= 15
-        if (self.courses[3].time.start == self.courses[4].time.start) or \
-           (self.courses[3].time.start == self.courses[6].time.start):
-            self.fitness -= 15
-        # if corequisite courses are adjacent 
-        index1 = 0
-        for t in range(0,len(self.classrooms[2].time)):
-            if self.classrooms[t].time[t].start == self.courses[2].time.start:
-                index1 = t
-                break
-        index2 = 0
-        for t in range(0,len(self.classrooms[3].time)):
-            if self.classrooms[t].time[t].start == self.courses[3].time.start:
-                index2 = t
-                break
-        index3 = 0
-        for t in range(0,len(self.classrooms[6].time)):
-            if self.classrooms[t].time[t].start == self.courses[6].time.start:
-                index3 = t
-                break
-        index4 = 0
-        for t in range(0,len(self.classrooms[0].time)):
-            if self.classrooms[t].time[t].start == self.courses[7].time.start:
-                index4 = t
-                break
-        if abs(index1 - index3) == 1 or \
-           abs(index1 - index4) == 1:
-            self.fitness += 5
-            # check if in same building
-            if (self.courses[2].place.name == self.courses[6].place.name) or \
-               (self.courses[2].place.name == self.courses[7].place.name):
-                    self.fitness += 5
-            else:
-                if (self.courses[2].place.name == "Katz 209" or \
-                   self.courses[6].place.name == "Katz 209" or \
-                   self.courses[7].place.name == "Katz 209"):
-                    self.fitness -= 3
-                if (self.courses[2].place.name == "Bloch 0009" or \
-                   self.courses[6].place.name == "Bloch 0009" or \
-                   self.courses[7].place.name == "Bloch 0009"):
-                    self.fitness -= 3
-
-        if abs(index2 - index3) == 1 or \
-           abs(index2 - index4) == 1:
-            self.fitness += 5
-            # check if in same building
-            if (self.courses[3].place.name == self.courses[6].place.name) or \
-               (self.courses[3].place.name == self.courses[7].place.name):
-                    self.fitness += 5
-            else:
-                if (self.courses[3].place.name == "Katz 209" or \
-                   self.courses[6].place.name == "Katz 209" or \
-                   self.courses[7].place.name == "Katz 209"):
-                    self.fitness -= 3
-                if (self.courses[3].place.name == "Bloch 0009" or \
-                   self.courses[6].place.name == "Bloch 0009" or \
-                   self.courses[7].place.name == "Bloch 0009"):
-                    self.fitness -= 3
+            if (c.place.size >= c.size):
+                self.fitness += 5
+                if( 2*c.place.size <= c.size):
+                    self.fitness += 2
         
-        # if corequisite course at same time 101 and 191
-        if (self.courses[0].time.start == self.courses[4].time.start) or \
-           (self.courses[0].time.start == self.courses[5].time.start):
-            self.fitness -= 15
-        if (self.courses[1].time.start == self.courses[4].time.start) or \
-           (self.courses[1].time.start == self.courses[5].time.start):
-            self.fitness -= 15
-        # if corequisite course are adjacent 
-        index1 = 0
-        for t in range(0,len(self.classrooms[0].time)):
-            if self.classrooms[t].time[t].start == self.courses[0].time.start:
-                index1 = t
-                break
-        index2 = 0
-        for t in range(0,len(self.classrooms[1].time)):
-            if self.classrooms[t].time[t].start == self.courses[1].time.start:
-                index2 = t
-                break
-        index3 = 0
-        for t in range(0,len(self.classrooms[4].time)):
-            if self.classrooms[t].time[t].start == self.courses[4].time.start:
-                index3 = t
-                break
-        index4 = 0
-        for t in range(0,len(self.classrooms[5].time)):
-            if self.classrooms[t].time[t].start == self.courses[5].time.start:
-                index4 = t
-                break
-        if abs(index1 - index3) == 1 or \
-           abs(index1 - index4) == 1:
-            self.fitness += 5
-            # check if in same building
-            if (self.courses[0].place.name == self.courses[4].place.name) or \
-               (self.courses[0].place.name == self.courses[5].place.name):
-                    self.fitness += 5
-            else:
-                if (self.courses[0].place.name == "Katz 209" or \
-                   self.courses[4].place.name == "Katz 209" or \
-                   self.courses[5].place.name == "Katz 209"):
-                    self.fitness -= 3
-                if (self.courses[0].place.name == "Bloch 0009" or \
-                   self.courses[4].place.name == "Bloch 0009" or \
-                   self.courses[5].place.name == "Bloch 0009"):
-                    self.fitness -= 3
+    def sa_random_change(self,T):
+        for c in range(0,len(self.courses)-1):
+            rnum1 = r.uniform(0, 1)
+            rnum2 = r.uniform(0, 1)
+            rnum3 = r.uniform(0, 1)
+            if rnum1 < T:
+                # change time
+                self.courses[c].time = self.courses[c].place.time[r.randint(0,len(self.courses[c].place.time)-1)]
+            if rnum2 < T:
+                # change location
+                self.courses[c].place = self.classrooms[r.randint(0,len(self.classrooms)-1)]
+            if rnum3 < T:
+                # change professor
+                self.courses[c].instructor = self.profs[r.randint(0,len(self.profs)-1)]
+            
 
-        if abs(index2 - index3) == 1 or \
-           abs(index2 - index4) == 1:
-            self.fitness += 5
-            # check if in same building
-            if (self.courses[1].place.name == self.courses[4].place.name) or \
-               (self.courses[1].place.name == self.courses[5].place.name):
-                    self.fitness += 5
-            else:
-                if (self.courses[1].place.name == "Katz 209" or \
-                   self.courses[4].place.name == "Katz 209" or \
-                   self.courses[5].place.name == "Katz 209"):
-                    self.fitness -= 3
-                if (self.courses[1].place.name == "Bloch 0009" or \
-                   self.courses[4].place.name == "Bloch 0009" or \
-                   self.courses[5].place.name == "Bloch 0009"):
-                    self.fitness -= 3
-        if abs(index1 - index2) >= 3:
-            self.fitness += 5
-        if abs(index3 - index4) >= 3:
-            self.fitness += 5
+def simulated_annealing(courses, timings, classrooms, profs):
+    alpha = 0.99
+    T = 1
+    T_min = 0.00001
+    
+    cursolution = Schedule(courses, timings, classrooms, profs)
+    cursolution.random_schedule()
+    cursolution.calculate_fitness_score()
+    print(cursolution.pprint())
+    print('Initial solution: ', cursolution.fitness)
 
-
-
+    concur_changes = 0
+    concur_nochanges = 0
+    iterations = 0
+    while iterations > -1:
+        newsolution = copy.deepcopy(cursolution)
+        newsolution.fitness = 0
+        newsolution.sa_random_change(T)
+        newsolution.calculate_fitness_score()
+        if (newsolution.fitness > cursolution.fitness):
+            cursolution = newsolution
+            concur_changes += 1
+            concur_nochanges = 0
+        else:
+            concur_changes = 0
+            concur_nochanges += 1
+        iterations += 1
+        if concur_nochanges >= 4000:
+            break;
+        elif concur_changes >= 400 or iterations >= 4000:
+            concur_nochanges = 0
+            concur_changes = 0
+            iterations = 0
+            T = T * alpha
+    ##cursolution.pprint()
+    print('T: ', T)
+    print('End solution', cursolution.fitness)
+        
+    
 
 
 

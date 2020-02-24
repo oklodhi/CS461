@@ -41,12 +41,14 @@ courses = [ Course("CS101A", 40),
             Course("CS461", 40)]
 
 # create a list of schedules
-schedule_list = []
+##schedule_list = []
 # generate 10 random schedules, append to list, and find each ones fitness scores
-for i in range(0,10):
-    schedule_list.append(Schedule(courses, timings, classrooms, profs))
-    schedule_list[i].generate_schedule()
-    schedule_list[i].calculate_fitness_score()
-    print(i,schedule_list[i].fitness)
+##for i in range(0,10):
+##    schedule_list.append(Schedule(courses, timings, classrooms, profs))
+##    schedule_list[i].generate_schedule()
+##    schedule_list[i].calculate_fitness_score()
+##    print(i,schedule_list[i].fitness)
+
+simulated_annealing(courses, timings, classrooms, profs)
 
 
