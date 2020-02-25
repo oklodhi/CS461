@@ -174,12 +174,22 @@ class Schedule:
     # calculate fitness score based on the given constraints
     def calculate_fitness_score(self):
         self.fitness = 0
+        # if instructor teaching more than 4 courses\
+        num_profs = [0]*(len(self.profs))
+        new = None
         for c in self.courses:
-            # if room size is twice enrollment
-            if (c.place.size >= c.size):
-                self.fitness += 5
-                if( 2*c.place.size <= c.size):
-                    self.fitness += 2
+            new = 0
+            for p in range(0,len(self.profs)-1):
+                print(c.instructor.name)
+                print(self.profs[p].name)
+                if c.instructor.name == self.profs[p].name:
+                    print('ADDED')
+                    new += 1
+                num_profs[p] = new
+        print(num_profs)
+        for p in num_profs:
+            if p > 4:
+                self.fitness -= 5*(p-4)
         
     def sa_random_change(self,T):
         for c in range(0,len(self.courses)-1):

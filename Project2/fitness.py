@@ -5,11 +5,16 @@
             elif c.name in c.instructor.courses:
                 self.fitness += 3
             # if room size is twice enrollment
-            if (c.place.size >= c.size):
+            if (c.size <= c.place.size):
                 self.fitness += 5
-                if( 2*c.place.size <= c.size):
+                # if room is twice as enrollment
+                if( c.place.size <= c.size*2):
                     self.fitness += 2
-        # if instructor teaching more than 4 courses\
+        # instructor only teaches 1 course at the same time
+        for p in self.profs:
+            if len(p.time) != len(set(p.time)):
+                
+        # if instructor teaching more than 4 courses
         num_profs = [0]*(len(self.profs))
         for c in self.courses:
             for p in range(0,len(self.profs)-1):
