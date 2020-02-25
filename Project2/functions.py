@@ -168,28 +168,163 @@ class Schedule:
             self.create_single_course(self.courses[i])
         #self.pprint()
 
-    #def update(self):
-        #continue
-
     # calculate fitness score based on the given constraints
     def calculate_fitness_score(self):
         self.fitness = 0
-        # if instructor teaching more than 4 courses\
-        num_profs = [0]*(len(self.profs))
-        new = None
+        # taught by instructor or staff
         for c in self.courses:
-            new = 0
-            for p in range(0,len(self.profs)-1):
-                print(c.instructor.name)
-                print(self.profs[p].name)
+            if c.instructor.name == "Staff":
+                self.fitness += 1
+            elif c.name in c.instructor.courses:
+                self.fitness += 3
+            # if room size is twice enrollment
+            if (c.size <= c.place.size):
+                self.fitness += 5
+                # if room is twice as enrollment
+                if( c.place.size <= c.size*2):
+                    self.fitness += 2
+                    
+        # instructor only teaches 1 course at the same time
+        for p in range(0,len(self.profs)):
+            self.profs[p].time = []
+            for c in self.courses:
                 if c.instructor.name == self.profs[p].name:
-                    print('ADDED')
+                    self.profs[p].time.append(c.time)
+            for t in range(0, len(self.profs[p].time)):
+                for i in range(t+1,len(self.profs[p].time)):
+                    if self.profs[p].time[t].start != self.profs[p].time[i].start:
+                        if self.profs[p].name != 'Staff':
+                            self.fitness += 5
+        # if corequisite course at same time 201 and 291
+        if (self.courses[2].time.start == self.courses[6].time.start):
+            self.fitness -= 15
+        if (self.courses[3].time.start == self.courses[7].time.start):
+            self.fitness -= 15
+            
+        # if corequisite courses are adjacent 
+        index1 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[2].time.start:
+                index1 = t
+                break
+        index2 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[3].time.start:
+                index2 = t
+                break
+        index3 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[6].time.start:
+                index3 = t
+                break
+        index4 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[7].time.start:
+                index4 = t
+                break
+        if abs(index1 - index3) == 1:
+            self.fitness += 5
+            
+            # check if in same building
+            if (self.courses[2].place.name == self.courses[6].place.name):
+                    self.fitness += 5
+            else:
+                if (self.courses[2].place.name == "Katz 209" or \
+                   self.courses[6].place.name == "Katz 209"):
+                    self.fitness -= 3
+                if (self.courses[2].place.name == "Bloch 0009" or \
+                   self.courses[6].place.name == "Bloch 0009"):
+                    self.fitness -= 3
+
+        if abs(index2 - index4) == 1:
+            self.fitness += 5
+            
+            # check if in same building
+            if (self.courses[3].place.name == self.courses[7].place.name):
+                    self.fitness += 5
+            else:
+                if (self.courses[3].place.name == "Katz 209" or \
+                   self.courses[7].place.name == "Katz 209"):
+                    self.fitness -= 3
+                if (self.courses[3].place.name == "Bloch 0009" or \
+                   self.courses[7].place.name == "Bloch 0009"):
+                    self.fitness -= 3
+                    
+        # if corequisite course at same time 101 and 191
+        if (self.courses[0].time.start == self.courses[4].time.start):
+            self.fitness -= 15
+        if (self.courses[1].time.start == self.courses[5].time.start) :
+            self.fitness -= 15
+            
+        # if corequisite course are adjacent 
+        index1 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[0].time.start:
+                index1 = t
+                break
+        index2 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[1].time.start:
+                index2 = t
+                break
+        index3 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[4].time.start:
+                index3 = t
+                break
+        index4 = 0
+        for t in range(0,len(self.classrooms[0].time)):
+            if self.classrooms[0].time[t].start == self.courses[5].time.start:
+                index4 = t
+                break
+        if abs(index1 - index3) == 1:
+            self.fitness += 5
+            
+            # check if in same building
+            if (self.courses[0].place.name == self.courses[4].place.name):
+                    self.fitness += 5
+            else:
+                if (self.courses[0].place.name == "Katz 209" or \
+                   self.courses[4].place.name == "Katz 209"):
+                    self.fitness -= 3
+                if (self.courses[0].place.name == "Bloch 0009" or \
+                   self.courses[4].place.name == "Bloch 0009"):
+                    self.fitness -= 3
+
+        if abs(index2 - index4) == 1:
+            self.fitness += 5
+            # check if in same building
+            if (self.courses[1].place.name == self.courses[5].place.name):
+                    self.fitness += 5
+            else:
+                if (self.courses[1].place.name == "Katz 209" or \
+                   self.courses[5].place.name == "Katz 209"):
+                    self.fitness -= 3
+                if (self.courses[1].place.name == "Bloch 0009" or \
+                   self.courses[5].place.name == "Bloch 0009"):
+                    self.fitness -= 3
+        if abs(index1 - index2) >= 3:
+            self.fitness += 5
+        if abs(index3 - index4) >= 3:
+            self.fitness += 5
+                
+        # if instructor teaching more than 4 courses
+        num_profs = [0]*(len(self.profs))
+        for p in range(0,len(self.profs)):
+            new = 0
+            for c in self.courses:
+                if c.instructor.name == self.profs[p].name:
                     new += 1
                 num_profs[p] = new
-        print(num_profs)
         for p in num_profs:
             if p > 4:
                 self.fitness -= 5*(p-4)
+        # Rao or Mitchell teaching more than Hare or Bingham
+        if (num_profs[3]) > (num_profs[0]) or \
+           (num_profs[3]) > (num_profs[1]) or \
+           (num_profs[4]) > (num_profs[0]) or \
+           (num_profs[4]) > (num_profs[1]):
+            self.fitness -= 10
         
     def sa_random_change(self,T):
         for c in range(0,len(self.courses)-1):
@@ -208,15 +343,17 @@ class Schedule:
             
 
 def simulated_annealing(courses, timings, classrooms, profs):
-    alpha = 0.99
+    alpha = 0.90
     T = 1
     T_min = 0.00001
     
     cursolution = Schedule(courses, timings, classrooms, profs)
+    #cursolution.generate_schedule()
     cursolution.random_schedule()
     cursolution.calculate_fitness_score()
     print(cursolution.pprint())
     print('Initial solution: ', cursolution.fitness)
+    print('#########################')
 
     concur_changes = 0
     concur_nochanges = 0
@@ -241,7 +378,9 @@ def simulated_annealing(courses, timings, classrooms, profs):
             concur_changes = 0
             iterations = 0
             T = T * alpha
-    ##cursolution.pprint()
+            print('T Updated: ', T)
+    cursolution.courses.sort(key=lambda courses: courses.time.start, reverse=False)
+    cursolution.pprint()
     print('T: ', T)
     print('End solution', cursolution.fitness)
         
