@@ -326,18 +326,28 @@ class Schedule:
            (num_profs[4]) > (num_profs[1]):
             self.fitness -= 10
         
-    def sa_random_change(self,T):
-        for c in range(0,len(self.courses)-1):
-            rnum1 = r.uniform(0, 1)
-            rnum2 = r.uniform(0, 1)
-            rnum3 = r.uniform(0, 1)
-            if rnum1 < T:
+    def sa_random_change(self, rnum):
+##        for c in range(0,len(self.courses)-1):
+##            rnum1 = r.uniform(0, 1)
+##            rnum2 = r.uniform(0, 1)
+##            rnum3 = r.uniform(0, 1)
+##            if rnum1 < T:
+##                # change time
+##                self.courses[c].time = self.courses[c].place.time[r.randint(0,len(self.courses[c].place.time)-1)]
+##            if rnum2 < T:
+##                # change location
+##                self.courses[c].place = self.classrooms[r.randint(0,len(self.classrooms)-1)]
+##            if rnum3 < T:
+##                # change professor
+##                self.courses[c].instructor = self.profs[r.randint(0,len(self.profs)-1)]
+        for c in range(0,len(self.courses)):
+            if rnum == 1:
                 # change time
                 self.courses[c].time = self.courses[c].place.time[r.randint(0,len(self.courses[c].place.time)-1)]
-            if rnum2 < T:
+            elif rnum == 2:
                 # change location
                 self.courses[c].place = self.classrooms[r.randint(0,len(self.classrooms)-1)]
-            if rnum3 < T:
+            elif rnum == 3:
                 # change professor
                 self.courses[c].instructor = self.profs[r.randint(0,len(self.profs)-1)]
             
@@ -360,8 +370,12 @@ def simulated_annealing(courses, timings, classrooms, profs):
     iterations = 0
     while iterations > -1:
         newsolution = copy.deepcopy(cursolution)
+
+        rnum = r.randint(1, 3)
+        print(rnum)
+        
+        newsolution.sa_random_change(rnum)
         newsolution.fitness = 0
-        newsolution.sa_random_change(T)
         newsolution.calculate_fitness_score()
         if (newsolution.fitness > cursolution.fitness):
             cursolution = newsolution
