@@ -1,3 +1,7 @@
+# Omer Khan
+# Project 2
+# CS461 Brian Hare
+
 from functions import *
 
 # list of professors and the courses they teach
@@ -27,7 +31,7 @@ classrooms = [  Location("Haag 301", 70, timings),
                 Location("Bloch 0009", 30, timings)]
 
 # list of courses to be taught and their respective enrollment size
-courses = [ Course("CS101A", 40),
+courses_dictionary = [ Course("CS101A", 40),
             Course("CS101B", 25),
             Course("CS201A", 30),
             Course("CS201B", 30),
@@ -40,15 +44,7 @@ courses = [ Course("CS101A", 40),
             Course("CS449", 55),
             Course("CS461", 40)]
 
-# create a list of schedules
-##schedule_list = []
-# generate 10 random schedules, append to list, and find each ones fitness scores
-##for i in range(0,10):
-##    schedule_list.append(Schedule(courses, timings, classrooms, profs))
-##    schedule_list[i].generate_schedule()
-##    schedule_list[i].calculate_fitness_score()
-##    print(i,schedule_list[i].fitness)
-
-simulated_annealing(courses, timings, classrooms, profs)
+# start simulated annealing and pass in all the above lists for reference
+simulated_annealing(courses_dictionary, timings, classrooms, profs)
 
 
