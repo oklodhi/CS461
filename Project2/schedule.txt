@@ -1,0 +1,61 @@
+CS191B
+Mitchell
+Flarsheim 260
+10:00
+
+CS449
+Hare
+Haag 301
+10:00
+
+CS101A
+Bingham
+Flarsheim 310
+11:00
+
+CS201A
+Hare
+Haag 206
+11:00
+
+CS291A
+Bingham
+Haag 206
+12:00
+
+CS291B
+Hare
+Haag 301
+12:00
+
+CS201B
+Hare
+Haag 206
+13:00
+
+CS303
+Mitchell
+Haag 301
+13:00
+
+CS341
+Kuhail
+Royall 204
+13:00
+
+CS101B
+Bingham
+Flarsheim 260
+14:00
+
+CS191A
+Bingham
+Flarsheim 310
+15:00
+
+CS461
+Rao
+Royall 204
+16:00
+
+Fitness Score: 320/320 Max possible

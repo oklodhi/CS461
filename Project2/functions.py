@@ -61,6 +61,23 @@ class Schedule:
             print(s.time.start)
             print()
 
+    def file_print(self):
+        file = open("schedule.txt", "w")
+
+        for s in self.courses:
+            file.write(s.name)
+            file.write('\n')
+            file.write(s.instructor.name)
+            file.write('\n')
+            file.write(s.place.name)
+            file.write('\n')
+            file.write(s.time.start)
+            file.write('\n')
+            file.write('\n')
+        file.write("Fitness Score: ")
+        file.write(str(self.fitness))
+        file.write("/320 Max possible")
+
     # calculate fitness score based on the given constraints
     def calculate_fitness_score(self):
         self.fitness = 0
@@ -388,5 +405,6 @@ def simulated_annealing(courses, timings, classrooms, profs):
     # sort the schedule by time and print schedule, T and final fitness
     cursolution.courses.sort(key=lambda courses: courses.time.start, reverse=False)
     cursolution.pprint()
+    cursolution.file_print()
     print('T: ', T)
     print('End solution', cursolution.fitness)
